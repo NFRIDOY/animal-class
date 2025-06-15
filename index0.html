@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Animal Phylum Classifier</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-blue-50 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-2xl rounded-xl p-8 max-w-md w-full">
+    <h2 class="text-2xl font-bold mb-4 text-blue-700">Animal Phylum Classifier</h2>
+
+    <form id="animalForm" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium">Animal Name</label>
+        <input type="text" id="name" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Habitat</label>
+        <input type="text" id="habitat" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Movement</label>
+        <input type="text" id="movement" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Phylum</label>
+        <select id="phylum" class="w-full border px-3 py-2 rounded-md">
+          <option value="Chordata">Chordata</option>
+          <option value="Arthropoda">Arthropoda</option>
+          <option value="Mollusca">Mollusca</option>
+        </select>
+      </div>
+
+      <div id="phylumExtra"></div>
+
+      <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-md hover:bg-blue-700">Describe</button>
+    </form>
+
+    <div id="result" class="mt-6 text-gray-800 font-medium"></div>
+  </div>
+
+  <script>
+    // Base Class
+    class Animal {
+      constructor(name, habitat, movement) {
+        this.name = name;
+        this.habitat = habitat;
+        this.movement = movement;
+      }
+
+      describe() {
+        return `${this.name} lives in ${this.habitat} and moves by ${this.movement}.`;
+      }
+    }
+
+    class Chordata extends Animal {
+      constructor(name, habitat, movement, backbone) {
+        super(name, habitat, movement);
+        this.phylum = 'Chordata';
+        this.backbone = backbone;
+      }
+
+      describe() {
+        return `${super.describe()} It belongs to ${this.phylum} and has a backbone: ${this.backbone}.`;
+      }
+    }
+
+    class Arthropoda extends Animal {
+      constructor(name, habitat, movement, exoskeleton) {
+        super(name, habitat, movement);
+        this.phylum = 'Arthropoda';
+        this.exoskeleton = exoskeleton;
+      }
+
+      describe() {
+        return `${super.describe()} It belongs to ${this.phylum} and has an exoskeleton: ${this.exoskeleton}.`;
+      }
+    }
+
+    class Mollusca extends Animal {
+      constructor(name, habitat, movement, shell) {
+        super(name, habitat, movement);
+        this.phylum = 'Mollusca';
+        this.shell = shell;
+      }
+
+      describe() {
+        return `${super.describe()} It belongs to ${this.phylum} and has a shell: ${this.shell}.`;
+      }
+    }
+
+    // Dynamic Extra Field
+    const phylumField = document.getElementById("phylum");
+    const phylumExtra = document.getElementById("phylumExtra");
+
+    function updateExtraField(phylum) {
+      let label, id;
+      switch(phylum) {
+        case 'Chordata':
+          label = "Has Backbone (true/false)";
+          id = "backbone";
+          break;
+        case 'Arthropoda':
+          label = "Has Exoskeleton (true/false)";
+          id = "exoskeleton";
+          break;
+        case 'Mollusca':
+          label = "Has Shell (true/false)";
+          id = "shell";
+          break;
+      }
+
+      phylumExtra.innerHTML = `
+        <label class="block mb-1 font-medium">${label}</label>
+        <input type="text" id="${id}" required class="w-full border px-3 py-2 rounded-md" />
+      `;
+    }
+
+    phylumField.addEventListener("change", (e) => {
+      updateExtraField(e.target.value);
+    });
+
+    // Init default
+    updateExtraField(phylumField.value);
+
+    // Form Submission
+    document.getElementById("animalForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const habitat = document.getElementById("habitat").value;
+      const movement = document.getElementById("movement").value;
+      const phylum = document.getElementById("phylum").value;
+      let animal;
+
+      if (phylum === 'Chordata') {
+        const backbone = document.getElementById("backbone").value === "true";
+        animal = new Chordata(name, habitat, movement, backbone);
+      } else if (phylum === 'Arthropoda') {
+        const exoskeleton = document.getElementById("exoskeleton").value === "true";
+        animal = new Arthropoda(name, habitat, movement, exoskeleton);
+      } else if (phylum === 'Mollusca') {
+        const shell = document.getElementById("shell").value === "true";
+        animal = new Mollusca(name, habitat, movement, shell);
+      }
+
+      document.getElementById("result").textContent = animal.describe();
+    });
+  </script>
+</body>
+</html>

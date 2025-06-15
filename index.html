@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Find Animal Phylum</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 min-h-screen flex items-center justify-center p-6">
+  <div class="bg-white shadow-xl rounded-xl p-8 max-w-xl w-full">
+    <h2 class="text-2xl font-bold mb-4 text-green-700">Find the Animal's Phylum</h2>
+
+    <form id="animalForm" class="space-y-4">
+      <div>
+        <label class="block mb-1 font-medium">Animal Name</label>
+        <input type="text" id="name" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Habitat</label>
+        <input type="text" id="habitat" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-1 font-medium">Movement</label>
+        <input type="text" id="movement" required class="w-full border px-3 py-2 rounded-md" />
+      </div>
+
+      <div>
+        <label class="block mb-2 font-medium">Select Traits</label>
+        <div class="grid grid-cols-2 gap-2">
+          <label><input name="traits" type="radio" id="backbone" /> Has Backbone</label>
+          <label><input name="traits" type="radio" id="exoskeleton" /> Has Exoskeleton</label>
+          <label><input name="traits" type="radio" id="shell" /> Has Shell</label>
+          <label><input name="traits" type="radio" id="pores" /> Has Body Pores</label>
+          <label><input name="traits" type="radio" id="tentacles" /> Has Tentacles</label>
+          <label><input name="traits" type="radio" id="spiny" /> Has Spiny Skin</label>
+        </div>
+      </div>
+
+      <button type="submit" class="w-full bg-green-600 text-white py-2 rounded-md hover:bg-green-700">Find Phylum</button>
+    </form>
+
+    <div id="result" class="mt-6 text-gray-800 font-medium"></div>
+  </div>
+
+  <script>
+    class Animal {
+      constructor(name, habitat, movement) {
+        this.name = name;
+        this.habitat = habitat;
+        this.movement = movement;
+      }
+
+      describe() {
+        return `${this.name} lives in ${this.habitat} and moves by ${this.movement}.`;
+      }
+    }
+
+    class Chordata extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Chordata and has a backbone.`;
+      }
+    }
+
+    class Arthropoda extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Arthropoda and has an exoskeleton.`;
+      }
+    }
+
+    class Mollusca extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Mollusca and has a shell.`;
+      }
+    }
+
+    class Porifera extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Porifera and has pores on its body.`;
+      }
+    }
+
+    class Cnidaria extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Cnidaria and has tentacles.`;
+      }
+    }
+
+    class Echinodermata extends Animal {
+      describe() {
+        return `${super.describe()} It belongs to Phylum Echinodermata and has spiny skin.`;
+      }
+    }
+
+    function getSelectedTraits() {
+      return {
+        backbone: document.getElementById("backbone").checked,
+        exoskeleton: document.getElementById("exoskeleton").checked,
+        shell: document.getElementById("shell").checked,
+        pores: document.getElementById("pores").checked,
+        tentacles: document.getElementById("tentacles").checked,
+        spiny: document.getElementById("spiny").checked
+      };
+    }
+
+    function determinePhylum(traits) {
+      if (traits.backbone) return Chordata;
+      if (traits.exoskeleton) return Arthropoda;
+      if (traits.shell) return Mollusca;
+      if (traits.pores) return Porifera;
+      if (traits.tentacles) return Cnidaria;
+      if (traits.spiny) return Echinodermata;
+      return null;
+    }
+
+    document.getElementById("animalForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value;
+      const habitat = document.getElementById("habitat").value;
+      const movement = document.getElementById("movement").value;
+      const traits = getSelectedTraits();
+      const PhylumClass = determinePhylum(traits);
+
+      const resultBox = document.getElementById("result");
+
+      if (PhylumClass) {
+        const animal = new PhylumClass(name, habitat, movement);
+        resultBox.textContent = animal.describe();
+      } else {
+        resultBox.textContent = "Unable to determine phylum. Please select at least one trait.";
+      }
+    });
+  </script>
+</body>
+</html>
